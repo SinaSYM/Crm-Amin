@@ -1,0 +1,19 @@
+[Unit]
+Description=Amin CRM database migrations
+After=local-fs.target
+
+[Service]
+Type=oneshot
+User=amin-crm
+Group=amin-crm
+WorkingDirectory=/opt/amin-crm/current
+EnvironmentFile=/etc/amin-crm.env
+ExecStart=/usr/bin/node /opt/amin-crm/current/ops/prisma-cli/node_modules/prisma/build/index.js migrate deploy --schema=/opt/amin-crm/current/ops/prisma/schema.prisma
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/amin-crm
+
+[Install]
+WantedBy=multi-user.target

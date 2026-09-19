@@ -1,0 +1,28 @@
+[Unit]
+Description=Amin CRM reminder worker
+Requires=amin-crm-migrate.service
+After=network-online.target amin-crm-migrate.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=amin-crm
+Group=amin-crm
+WorkingDirectory=/opt/amin-crm/current
+EnvironmentFile=/etc/amin-crm.env
+ExecStart=/usr/bin/node /opt/amin-crm/current/workers/reminder-worker.js
+Restart=on-failure
+RestartSec=10s
+TimeoutStopSec=30s
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/amin-crm
+MemoryMax=384M
+TasksMax=64
+
+# This service is intentionally not enabled by the release installer. Enable it
+# only after REMINDER_WEBHOOK_URL has been configured and tested.
+[Install]
+WantedBy=multi-user.target

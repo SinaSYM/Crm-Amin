@@ -1,0 +1,28 @@
+[Unit]
+Description=Amin CRM Next.js service
+Requires=amin-crm-migrate.service
+After=network-online.target amin-crm-migrate.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=amin-crm
+Group=amin-crm
+WorkingDirectory=/opt/amin-crm/current
+EnvironmentFile=/etc/amin-crm.env
+ExecStart=/usr/bin/node /opt/amin-crm/current/server.js
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=30s
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/amin-crm
+MemoryMax=1200M
+TasksMax=128
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

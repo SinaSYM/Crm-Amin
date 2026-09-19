@@ -1,0 +1,110 @@
+﻿۱. جدول کاربران (Users)
+هدف: مدیریت یکپارچه پرسنل و دانش‌پذیران
+نام فیلد
+	نوع داده (Data Type)
+	توضیحات و نقش فیلد
+	id
+	UUID
+	کلید اصلی (Primary Key)
+	first_name
+	String
+	نام
+	last_name
+	String
+	نام خانوادگی
+	phone_number
+	String
+	شماره موبایل (یکتا - برای لاگین)
+	role
+	Enum
+	نقش (ADMIN, SALES_MANAGER, SALES_AGENT, STUDENT)
+	is_active
+	Boolean
+	وضعیت فعالیت کاربر در سیستم
+	________________
+۲. جدول سرنخ‌ها (Leads)
+هدف: ذخیره و رهگیری وضعیت مشتریان بالقوه
+نام فیلد
+	نوع داده (Data Type)
+	توضیحات و نقش فیلد
+	id
+	UUID
+	کلید اصلی (Primary Key)
+	phone_number
+	String
+	شماره تماس لید
+	source
+	String
+	منبع ورودی (سایت، دستی، کمپین)
+	status
+	Enum
+	وضعیت (NEW, CONTACTED, IN_PROGRESS, CONVERTED)
+	assigned_to_id
+	UUID
+	کلید خارجی به جدول Users (فروشنده مسئول)
+	target_course_id
+	UUID
+	کلید خارجی به جدول Courses (دوره مورد علاقه)
+	________________
+۳. جدول تعاملات و پیگیری‌ها (Interactions)
+هدف: ثبت تاریخچه تماس‌ها، یادداشت‌ها و تسک‌های روزانه فروشندگان
+نام فیلد
+	نوع داده (Data Type)
+	توضیحات و نقش فیلد
+	id
+	UUID
+	کلید اصلی (Primary Key)
+	lead_id
+	UUID
+	کلید خارجی به جدول Leads
+	agent_id
+	UUID
+	کلید خارجی به جدول Users (ثبت‌کننده)
+	interaction_type
+	Enum
+	نوع تعامل (CALL, NOTE, SYSTEM)
+	content
+	Text
+	خلاصه مکالمه یا یادداشت
+	next_followup_date
+	DateTime
+	تاریخ و زمان تماس یا پیگیری بعدی
+	________________
+۴. جدول دوره‌های آموزشی (Courses)
+هدف: مدیریت محصولات آموزشی موسسه
+نام فیلد
+	نوع داده (Data Type)
+	توضیحات و نقش فیلد
+	id
+	UUID
+	کلید اصلی (Primary Key)
+	title
+	String
+	عنوان دوره
+	price
+	Decimal
+	قیمت دوره
+	is_active
+	Boolean
+	وضعیت برگزاری دوره
+	________________
+۵. جدول ثبت‌نام‌ها / پورتال (Enrollments)
+هدف: اتصال دانش‌پذیران به دوره‌ها و مدیریت دسترسی پورتال
+نام فیلد
+	نوع داده (Data Type)
+	توضیحات و نقش فیلد
+	id
+	UUID
+	کلید اصلی (Primary Key)
+	student_id
+	UUID
+	کلید خارجی به جدول Users (فقط نقش STUDENT)
+	course_id
+	UUID
+	کلید خارجی به جدول Courses
+	payment_status
+	String
+	وضعیت مالی (PAID, INSTALLMENT)
+	enrollment_date
+	DateTime
+	تاریخ قطعی شدن ثبت‌نام

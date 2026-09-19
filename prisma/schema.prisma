@@ -1,0 +1,359 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  SALES_MANAGER
+  SALES_AGENT
+  STUDENT
+
+  // Amin Institute Roles
+  EDUCATION_OFFICER
+  FINANCIAL_OFFICER
+  MENTOR
+  DEPT_MANAGER
+}
+
+enum UserScope {
+  STANDARD
+  GLOBAL
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  IN_PROGRESS
+  CONVERTED
+}
+
+enum InteractionType {
+  CALL
+  NOTE
+  SYSTEM
+}
+
+enum PaymentStatus {
+  PAID
+  INSTALLMENT
+}
+
+model User {
+  id             String   @id @default(cuid())
+  first_name     String
+  last_name      String
+  phone_number   String   @unique
+  role           UserRole @default(SALES_AGENT)
+  is_active      Boolean  @default(true)
+  referral_code  String?  @unique
+  wallet_balance Float    @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  department     String?  // MANAGEMENT, REAL_ESTATE, FINANCE, LAW, PROJECT_MANAGEMENT
+  personal_notes String   @default("")
+  admin_notes    String   @default("")
+
+  // Auth fields
+  email          String?   @unique
+  passwordHash   String?
+  scope          UserScope @default(STANDARD)
+  isApproved     Boolean   @default(false)
+
+  // Relations
+  sessions       Session[]
+  accounts       Account[]
+  passwordResetTokens PasswordResetToken[]
+  assignedLeads  Lead[]        @relation("AssignedLeads")
+  referredLeads  Lead[]        @relation("ReferredLeads")
+  interactions   Interaction[]  @relation("AgentInteractions")
+  enrollments    Enrollment[]  @relation("StudentEnrollments")
+  tickets        Ticket[]      @relation("StudentTickets")
+  tasks          Task[]        @relation("AgentTasks")
+  commissions    Commission[]  @relation("UserCommissions")
+  purchases      PurchaseRequest[] @relation("UserPurchases")
+
+  @@index([department])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SignupRequest {
+  id                 String   @id @default(cuid())
+  email              String   @unique
+  first_name         String
+  last_name          String
+  phone_number       String
+  desired_department String?
+  passwordHash       String
+  status             String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  reviewed_by_id     String?
+  reviewed_at        DateTime?
+  review_note        String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Lead {
+  id               String     @id @default(cuid())
+  phone_number     String
+  first_name       String     @default("")
+  last_name        String     @default("")
+  source           String     @default("manual") // website, manual, campaign
+  status           LeadStatus @default(NEW)
+  score            Int        @default(0) // 0-100 lead quality score
+  segment          String     @default("NORMAL") // Segment: DORMANT, HIGH_VALUE, NURTURE, ENGAGED
+  notes            String     @default("")
+  assigned_to_id   String?
+  referred_by_id   String?
+  target_course_id String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  department       String?    // MANAGEMENT, REAL_ESTATE, FINANCE, LAW, PROJECT_MANAGEMENT
+
+  // Relations
+  assigned_to   User?         @relation("AssignedLeads", fields: [assigned_to_id], references: [id])
+  referred_by   User?         @relation("ReferredLeads", fields: [referred_by_id], references: [id], onDelete: SetNull)
+  target_course Course?       @relation(fields: [target_course_id], references: [id])
+  interactions  Interaction[]
+  tasks         Task[]
+  commission    Commission?
+
+  @@index([assigned_to_id])
+  @@index([status])
+  @@index([department])
+  @@index([phone_number])
+  @@index([target_course_id])
+}
+
+model Interaction {
+  id               String          @id @default(cuid())
+  lead_id          String
+  agent_id         String
+  interaction_type InteractionType @default(NOTE)
+  content          String
+  next_followup_date DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  // Relations
+  lead  Lead @relation(fields: [lead_id], references: [id], onDelete: Cascade)
+  agent User @relation("AgentInteractions", fields: [agent_id], references: [id])
+
+  @@index([lead_id])
+  @@index([agent_id])
+  @@index([next_followup_date])
+}
+
+model Course {
+  id        String   @id @default(cuid())
+  title     String
+  price     Float    @default(0)
+  capacity  Int      @default(30) // max students per course
+  is_active Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  department String?    // MANAGEMENT, REAL_ESTATE, FINANCE, LAW, PROJECT_MANAGEMENT
+
+  // Relations
+  leads       Lead[]
+  enrollments Enrollment[]
+  classes     ClassSession[]
+}
+
+model Enrollment {
+  id              String        @id @default(cuid())
+  student_id      String
+  course_id       String
+  payment_status  PaymentStatus @default(PAID)
+  enrollment_date DateTime      @default(now())
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  student User     @relation("StudentEnrollments", fields: [student_id], references: [id])
+  course  Course   @relation(fields: [course_id], references: [id])
+  payments Payment[]
+
+  @@index([student_id])
+  @@index([course_id])
+  @@index([payment_status])
+}
+
+enum PaymentType {
+  FULL
+  INSTALLMENT
+}
+
+enum PaymentItemStatus {
+  PENDING
+  PAID
+  OVERDUE
+}
+
+model Payment {
+  id              String           @id @default(cuid())
+  enrollment_id   String
+  amount          Float
+  payment_type    PaymentType      @default(FULL)
+  status          PaymentItemStatus @default(PENDING)
+  due_date        DateTime
+  paid_date       DateTime?
+  description     String           @default("")
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  check_number    String?
+  check_bank      String?
+  check_date      DateTime?
+  check_status    String?    // PENDING, CLEARED, BOUNCED
+
+  // Relations
+  enrollment Enrollment @relation(fields: [enrollment_id], references: [id], onDelete: Cascade)
+
+  @@index([enrollment_id])
+}
+
+model Ticket {
+  id          String   @id @default(cuid())
+  student_id  String
+  title       String
+  description String
+  status      String   @default("PENDING") // PENDING, IN_PROGRESS, RESOLVED
+  priority    String   @default("NORMAL") // LOW, NORMAL, HIGH
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  student User @relation("StudentTickets", fields: [student_id], references: [id], onDelete: Cascade)
+
+  @@index([student_id])
+}
+
+model ClassSession {
+  id           String   @id @default(cuid())
+  course_id    String
+  title        String
+  date         DateTime
+  link         String?  // live class link
+  archive_url  String?  // video/audio archive
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  course Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  agent_id    String
+  lead_id     String?
+  title       String
+  description String   @default("")
+  due_date    DateTime
+  status      String   @default("PENDING") // PENDING, COMPLETED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  reminder_time   Int?       // Minutes offset, null = no reminder
+  reminder_sent   Boolean    @default(false)
+
+  // Relations
+  agent User  @relation("AgentTasks", fields: [agent_id], references: [id], onDelete: Cascade)
+  lead  Lead? @relation(fields: [lead_id], references: [id], onDelete: SetNull)
+
+  @@index([agent_id])
+  @@index([due_date])
+}
+
+enum CommissionStatus {
+  PENDING
+  APPROVED
+  PAID
+}
+
+model Commission {
+  id              String           @id @default(cuid())
+  referrer_id     String
+  referee_lead_id String           @unique
+  amount          Float
+  status          CommissionStatus @default(PENDING)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  // Relations
+  referrer        User             @relation("UserCommissions", fields: [referrer_id], references: [id], onDelete: Cascade)
+  referee_lead    Lead             @relation(fields: [referee_lead_id], references: [id], onDelete: Cascade)
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  user_id     String
+  user_name   String
+  user_role   String
+  action      String
+  description String
+  createdAt   DateTime @default(now())
+}
+
+model PurchaseRequest {
+  id           String   @id @default(cuid())
+  requester_id String
+  item_name    String
+  amount       Float
+  quantity     Int      @default(1)
+  description  String   @default("")
+  status       String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  requester    User     @relation("UserPurchases", fields: [requester_id], references: [id], onDelete: Cascade)
+}
+
+model Teacher {
+  id           String   @id @default(cuid())
+  name         String
+  phone_number String
+  email        String?
+  specialty    String
+  status       String   @default("ACTIVE")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

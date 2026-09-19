@@ -1,0 +1,610 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  /* ── HYPERGLASS monochrome remap ──────────────────────────────────
+     The app was originally built on emerald/teal/cyan scales.
+     They are remapped to pure neutral grays so every button, badge
+     and chart becomes strict black & white without touching components. */
+  --color-emerald-50: #fafafa;
+  --color-emerald-100: #f5f5f5;
+  --color-emerald-200: #e5e5e5;
+  --color-emerald-300: #d4d4d4;
+  --color-emerald-400: #a3a3a3;
+  --color-emerald-500: #737373;
+  --color-emerald-600: #525252;
+  --color-emerald-700: #404040;
+  --color-emerald-800: #262626;
+  --color-emerald-900: #171717;
+  --color-emerald-950: #0a0a0a;
+  --color-teal-50: #fafafa;
+  --color-teal-100: #f5f5f5;
+  --color-teal-200: #e5e5e5;
+  --color-teal-300: #d4d4d4;
+  --color-teal-400: #a3a3a3;
+  --color-teal-500: #737373;
+  --color-teal-600: #525252;
+  --color-teal-700: #404040;
+  --color-teal-800: #262626;
+  --color-teal-900: #171717;
+  --color-teal-950: #0a0a0a;
+  --color-cyan-50: #fafafa;
+  --color-cyan-100: #f5f5f5;
+  --color-cyan-200: #e5e5e5;
+  --color-cyan-300: #d4d4d4;
+  --color-cyan-400: #a3a3a3;
+  --color-cyan-500: #737373;
+  --color-cyan-600: #525252;
+  --color-cyan-700: #404040;
+  --color-cyan-800: #262626;
+  --color-cyan-900: #171717;
+  --color-cyan-950: #0a0a0a;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ─── HYPERGLASS monochrome palette ───
+   Strict black & white. Light: paper gray + white glass.
+   Dark: near-black + charcoal glass. Hairline borders everywhere. */
+:root {
+  --radius: 0.75rem;
+  --background: #f4f4f3;
+  --foreground: #0f0f0f;
+  --card: rgba(255, 255, 255, 0.82);
+  --card-foreground: #0f0f0f;
+  --popover: rgba(255, 255, 255, 0.92);
+  --popover-foreground: #0f0f0f;
+  --primary: #111111;
+  --primary-foreground: #ffffff;
+  --secondary: #ebebea;
+  --secondary-foreground: #171717;
+  --muted: #ececea;
+  --muted-foreground: #73716c;
+  --accent: #e7e7e5;
+  --accent-foreground: #111111;
+  --destructive: #e03e3e;
+  --border: rgba(15, 15, 15, 0.08);
+  --input: rgba(15, 15, 15, 0.14);
+  --ring: rgba(15, 15, 15, 0.35);
+  /* Data-viz palette: muted editorial, high legibility (ink, terracotta, dusty blue, moss, ochre) */
+  --chart-1: #1c1b1a;
+  --chart-2: #c97b4a;
+  --chart-3: #4a7ba6;
+  --chart-4: #6f9b6f;
+  --chart-5: #c9a227;
+  --sidebar: rgba(255, 255, 255, 0.6);
+  --sidebar-foreground: #0f0f0f;
+  --sidebar-primary: #111111;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #ebebe9;
+  --sidebar-accent-foreground: #111111;
+  --sidebar-border: rgba(15, 15, 15, 0.07);
+  --sidebar-ring: rgba(15, 15, 15, 0.35);
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #f5f5f4;
+  --card: rgba(23, 23, 23, 0.72);
+  --card-foreground: #f5f5f4;
+  --popover: rgba(28, 28, 28, 0.92);
+  --popover-foreground: #f5f5f4;
+  --primary: #ffffff;
+  --primary-foreground: #0a0a0a;
+  --secondary: #1f1f1f;
+  --secondary-foreground: #e5e5e4;
+  --muted: #1c1c1c;
+  --muted-foreground: #a8a49e;
+  --accent: #2a2a2a;
+  --accent-foreground: #fafafa;
+  --destructive: #ff7369;
+  --border: rgba(255, 255, 255, 0.09);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: rgba(255, 255, 255, 0.45);
+  --chart-1: #f2f1ef;
+  --chart-2: #e0926b;
+  --chart-3: #7ea6cd;
+  --chart-4: #93bd97;
+  --chart-5: #ddb84f;
+  --sidebar: rgba(20, 20, 20, 0.72);
+  --sidebar-foreground: #f5f5f4;
+  --sidebar-primary: #fafafa;
+  --sidebar-primary-foreground: #0a0a0a;
+  --sidebar-accent: #262626;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: rgba(255, 255, 255, 0.07);
+  --sidebar-ring: rgba(255, 255, 255, 0.45);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  /* Tailwind v4 preflight leaves buttons with the default arrow cursor, which
+     makes every control feel dead. Enabled buttons always get a pointer. */
+  button:not(:disabled),
+  [role='button']:not(:disabled),
+  [data-slot='button']:not(:disabled) {
+    cursor: pointer;
+  }
+  body {
+    @apply text-foreground;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Headings slightly tighter for a calmer hierarchy */
+  h1, h2, h3 {
+    letter-spacing: -0.01em;
+  }
+}
+
+/* ===== HYPERGLASS ambient canvas: soft vignettes + fine grid ===== */
+body {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(1000px circle at 85% -10%, rgba(15, 15, 15, 0.045), transparent 55%),
+    radial-gradient(800px circle at 8% 110%, rgba(15, 15, 15, 0.035), transparent 52%),
+    linear-gradient(rgba(15, 15, 15, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 15, 15, 0.028) 1px, transparent 1px);
+  background-size: auto, auto, 44px 44px, 44px 44px;
+  background-attachment: fixed;
+}
+.dark body {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(1000px circle at 85% -10%, rgba(255, 255, 255, 0.05), transparent 55%),
+    radial-gradient(800px circle at 8% 110%, rgba(255, 255, 255, 0.035), transparent 52%),
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+}
+
+/* Custom Scrollbar — see Task 31 section below for improved styles */
+
+/* Better focus */
+*:focus-visible {
+  outline: 2px solid rgba(15, 15, 15, 0.45);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+.dark *:focus-visible {
+  outline-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Custom selection */
+::selection {
+  background: rgba(15, 15, 15, 0.16);
+}
+.dark ::selection {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* ===== Refined component polish ===== */
+
+/* Inputs: softer resting state, clear focus */
+input:not([type='checkbox']):not([type='radio']),
+textarea,
+select {
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+/* Table headers: quiet uppercase-free labels on a soft strip */
+thead tr {
+  background-color: rgba(55, 53, 47, 0.03);
+}
+.dark thead tr {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+thead th {
+  font-weight: 600 !important;
+  color: var(--muted-foreground) !important;
+}
+
+/* Table rows: hairline dividers only between rows */
+tbody tr {
+  border-bottom: 1px solid var(--border);
+}
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Badges: pill-shaped, softer borders */
+[data-slot='badge'],
+span[class*='rounded-full'][class*='border'] {
+  border-radius: 9999px;
+}
+
+/* Dialogs / sheets / popovers get real glass */
+[data-slot='dialog-content'],
+[data-slot='sheet-content'],
+[data-slot='popover-content'],
+[data-slot='dropdown-menu-content'],
+[data-slot='select-content'] {
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: rgba(15, 15, 15, 0.10) 0px 10px 32px,
+    rgba(15, 15, 15, 0.05) 0px 0px 0px 1px,
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+.dark [data-slot='dialog-content'],
+.dark [data-slot='sheet-content'],
+.dark [data-slot='popover-content'],
+.dark [data-slot='dropdown-menu-content'],
+.dark [data-slot='select-content'] {
+  background: rgba(34, 34, 34, 0.88);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: rgba(0, 0, 0, 0.45) 0px 10px 36px,
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ===== Glassmorphism utilities ===== */
+
+/* Frosted surface: translucent white + backdrop blur + hairline inner border */
+.glass-surface {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+}
+.dark .glass-surface {
+  background: rgba(24, 24, 24, 0.6);
+}
+
+/* Stronger glass for floating chrome (navbar, sidebar, dialogs) */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(22px) saturate(1.25);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  border: 1px solid rgba(15, 15, 15, 0.07);
+  box-shadow:
+    rgba(15, 15, 15, 0.05) 0px 2px 6px,
+    rgba(15, 15, 15, 0.04) 0px 12px 32px,
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+.dark .glass-panel {
+  background: rgba(18, 18, 18, 0.68);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    rgba(0, 0, 0, 0.4) 0px 2px 8px,
+    rgba(0, 0, 0, 0.3) 0px 14px 40px,
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Glossy pill highlight reused on stat cards and active nav */
+.gloss-highlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.22), transparent 42%);
+  pointer-events: none;
+}
+
+/* ===== Notion-style shared utilities ===== */
+
+/* Soft hover surface used by nav items, rows and ghost buttons */
+.notion-hover {
+  transition: background-color 120ms ease-in, color 120ms ease-in;
+}
+.notion-hover:hover {
+  background-color: rgba(55, 53, 47, 0.06);
+}
+.dark .notion-hover:hover {
+  background-color: rgba(255, 255, 255, 0.065);
+}
+
+/* Hairline card: flat surface with a subtle border instead of shadows */
+.notion-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: rgba(15, 15, 15, 0.02) 0px 1px 2px;
+  transition: box-shadow 200ms ease, border-color 200ms ease, transform 200ms ease;
+}
+.notion-card:hover {
+  border-color: rgba(55, 53, 47, 0.16);
+  box-shadow: rgba(15, 15, 15, 0.05) 0px 3px 6px,
+    rgba(9, 9, 9, 0.03) 0px 0px 0px 1px;
+}
+.dark .notion-card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 8px;
+}
+
+/* Auth pages: calm monochrome canvas with faint glows */
+.auth-canvas {
+  background:
+    radial-gradient(1100px circle at 85% -10%, rgba(15, 15, 15, 0.05), transparent 55%),
+    radial-gradient(900px circle at 10% 110%, rgba(15, 15, 15, 0.04), transparent 50%),
+    linear-gradient(rgba(15, 15, 15, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 15, 15, 0.025) 1px, transparent 1px),
+    #f4f4f3;
+  background-size: auto, auto, 44px 44px, 44px 44px, auto;
+}
+.dark .auth-canvas {
+  background:
+    radial-gradient(1100px circle at 85% -10%, rgba(255, 255, 255, 0.06), transparent 55%),
+    radial-gradient(900px circle at 10% 110%, rgba(255, 255, 255, 0.04), transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    #0a0a0a;
+  background-size: auto, auto, 44px 44px, 44px 44px, auto;
+}
+
+.auth-card {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 1.25rem;
+  box-shadow:
+    rgba(15, 15, 15, 0.06) 0px 6px 16px,
+    rgba(15, 15, 15, 0.05) 0px 24px 48px,
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+.dark .auth-card {
+  background: rgba(32, 32, 32, 0.78);
+  border-color: rgba(255, 255, 255, 0.09);
+  box-shadow:
+    rgba(0, 0, 0, 0.45) 0px 8px 28px,
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* ===== Simplified Styles (Static and Minimal) ===== */
+
+.card-hover-lift {
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.card-hover-lift:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.gradient-border-animated {
+  background-size: 100% 100%;
+}
+
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-row-hover {
+  transition: background-color 0.15s ease;
+}
+.premium-row-hover:hover {
+  background-color: rgba(55, 53, 47, 0.04) !important;
+}
+.dark .premium-row-hover:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.icon-tooltip {
+  position: relative;
+}
+.icon-tooltip::before {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: #1f2937;
+  color: white;
+  font-size: 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 50;
+}
+.icon-tooltip:hover::before {
+  opacity: 1;
+}
+
+.typing-cursor {
+  border-left: 2px solid currentColor;
+  padding-left: 2px;
+}
+
+.card-hover-effect {
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.card-hover-effect:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+
+/* ===== Improved Scrollbar Styles (neutral, Notion-like) ===== */
+
+/* Thin neutral scrollbar - Webkit */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(55, 53, 47, 0.18);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(55, 53, 47, 0.32);
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  background-clip: content-box;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+  background-clip: content-box;
+}
+
+/* Firefox scrollbar (neutral theme) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(55, 53, 47, 0.18) transparent;
+}
+
+.dark * {
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+}
+
+/* ===== Scrollability Affordance Hints (Container Queries) ===== */
+.scroll-container {
+  position: relative;
+  overflow-y: auto;
+  container-type: scroll-state;
+}
+
+.scroll-indicator-top {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.06), transparent);
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  margin-bottom: -12px; /* Pull content under it */
+}
+
+.scroll-indicator-bottom {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.06), transparent);
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  margin-top: -12px; /* Pull content under it */
+}
+
+.dark .scroll-indicator-top {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), transparent);
+}
+
+.dark .scroll-indicator-bottom {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.25), transparent);
+}
+
+@container scroll-state(scrollable: top) {
+  .scroll-indicator-top {
+    opacity: 1;
+  }
+}
+
+@container scroll-state(scrollable: bottom) {
+  .scroll-indicator-bottom {
+    opacity: 1;
+  }
+}
+
+/* ===== Dark-mode readability guarantees =====
+   Every button and text keeps enough contrast when the theme flips. */
+.dark {
+  color-scheme: dark;
+}
+
+/* Form controls: guaranteed readable text + visible borders in dark mode */
+.dark input,
+.dark textarea,
+.dark select {
+  color: var(--foreground);
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.16);
+  caret-color: var(--foreground);
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgba(255, 255, 255, 0.42);
+}
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+
+/* Buttons: never allow invisible text on a button in dark mode */
+.dark [data-slot='button'] {
+  color-scheme: dark;
+}
+.dark [data-slot='button'].bg-foreground,
+.dark [data-slot='button'].bg-primary {
+  color: var(--background);
+}
+.dark [data-slot='button'].text-background {
+  color: var(--background);
+}
+
+/* Muted text stays legible on dark glass surfaces */
+.dark .text-muted-foreground {
+  color: var(--muted-foreground);
+}
+.dark .glass-surface,
+.dark .glass-panel {
+  color: var(--foreground);
+}
+
