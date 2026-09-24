@@ -231,18 +231,11 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Create follow-up interaction and reminder task if next_followup_date is provided
+    // Schedule the reminder task if next_followup_date is provided.
+    // NOTE: no CALL interaction is auto-created here — follow-up calls are
+    // logged manually by the agent from the lead detail page.
     if (next_followup_date) {
       const followupDate = new Date(next_followup_date)
-      await db.interaction.create({
-        data: {
-          lead_id: lead.id,
-          agent_id: targetAgentId || session.userId,
-          interaction_type: 'CALL',
-          content: 'تماس پیگیری برنامه‌ریزی شد',
-          next_followup_date: followupDate,
-        },
-      })
 
       await db.task.create({
         data: {

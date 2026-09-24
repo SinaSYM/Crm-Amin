@@ -184,18 +184,8 @@ export async function PUT(
         },
       })
 
-      // Create new interaction for the follow-up rescheduling
-      await db.interaction.create({
-        data: {
-          lead_id: id,
-          agent_id: lead.assigned_to_id || session.userId,
-          interaction_type: 'CALL',
-          content: 'تاریخ تماس و پیگیری بروزرسانی شد',
-          next_followup_date: followupDate,
-        },
-      })
-
-      // Create new task with reminder
+      // Create new task with reminder (calls themselves are logged manually
+      // by the agent — the system only schedules the reminder task)
       await db.task.create({
         data: {
           lead_id: id,

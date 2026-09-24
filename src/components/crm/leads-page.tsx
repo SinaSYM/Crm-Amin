@@ -291,6 +291,9 @@ export default function LeadsPage() {
     next_followup_date: '',
   })
   const [newStatus, setNewStatus] = useState<LeadStatus>('NEW')
+  // Which option is picked in the source dropdown: one of the fixed keys or
+  // 'manual' (free text). Defaults to the standard manual entry.
+  const [sourceChoice, setSourceChoice] = useState('manual')
   const [statusNote, setStatusNote] = useState('')
 
   // Interaction form
@@ -402,7 +405,7 @@ export default function LeadsPage() {
       first_name: '',
       last_name: '',
       phone_number: '',
-      source: 'manual',
+      source: '',
       target_course_id: '',
       assigned_to_id: '',
       notes: '',
@@ -413,6 +416,7 @@ export default function LeadsPage() {
   // Open add dialog
   const handleOpenAdd = () => {
     resetForm()
+    setSourceChoice('manual')
     setAddDialogOpen(true)
   }
 
@@ -437,12 +441,13 @@ export default function LeadsPage() {
       first_name: lead.first_name,
       last_name: lead.last_name,
       phone_number: lead.phone_number,
-      source: lead.source,
+      source: ['manual', 'website', 'campaign'].includes(lead.source) ? '' : lead.source,
       target_course_id: lead.target_course_id || '',
       assigned_to_id: lead.assigned_to_id || '',
       notes: lead.notes,
       next_followup_date: formattedFollowup,
     })
+    setSourceChoice(['website', 'campaign'].includes(lead.source) ? lead.source : 'manual')
     setEditDialogOpen(true)
   }
 
@@ -1398,10 +1403,13 @@ export default function LeadsPage() {
               <legend className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">منبع و دوره</legend>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-xs">منبع</Label>
+                  <Label className="text-xs">منبع ورود</Label>
                   <Select
-                    value={formData.source}
-                    onValueChange={(val) => setFormData({ ...formData, source: val })}
+                    value={sourceChoice}
+                    onValueChange={(val) => {
+                      setSourceChoice(val)
+                      setFormData({ ...formData, source: val === 'manual' ? '' : val })
+                    }}
                   >
                     <SelectTrigger className="h-10 text-sm"><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -1410,6 +1418,14 @@ export default function LeadsPage() {
                       <SelectItem value="campaign">کمپین</SelectItem>
                     </SelectContent>
                   </Select>
+                  {sourceChoice === 'manual' && (
+                    <Input
+                      className="h-10 text-sm"
+                      value={formData.source}
+                      onChange={(e) => setFormData({ ...formData, source: e.target.value })}
+                      placeholder="متن منبع را تایپ کنید (اختیاری)..."
+                    />
+                  )}
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">دوره هدف</Label>
@@ -1534,10 +1550,13 @@ export default function LeadsPage() {
               <legend className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">منبع و دوره</legend>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-xs">منبع</Label>
+                  <Label className="text-xs">منبع ورود</Label>
                   <Select
-                    value={formData.source}
-                    onValueChange={(val) => setFormData({ ...formData, source: val })}
+                    value={sourceChoice}
+                    onValueChange={(val) => {
+                      setSourceChoice(val)
+                      setFormData({ ...formData, source: val === 'manual' ? '' : val })
+                    }}
                   >
                     <SelectTrigger className="h-10 text-sm"><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -1546,6 +1565,14 @@ export default function LeadsPage() {
                       <SelectItem value="campaign">کمپین</SelectItem>
                     </SelectContent>
                   </Select>
+                  {sourceChoice === 'manual' && (
+                    <Input
+                      className="h-10 text-sm"
+                      value={formData.source}
+                      onChange={(e) => setFormData({ ...formData, source: e.target.value })}
+                      placeholder="متن منبع را تایپ کنید (اختیاری)..."
+                    />
+                  )}
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">دوره هدف</Label>
@@ -2152,7 +2179,7 @@ export default function LeadsPage() {
                   <p className="font-medium font-mono" dir="ltr">{selectedLead.phone_number}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">منبع</p>
+                  <p className="text-xs text-muted-foreground">منبع ورود</p>
                   <p className="font-medium">{sourceLabels[selectedLead.source] || selectedLead.source}</p>
                 </div>
                 <div className="space-y-1">
